@@ -7,9 +7,10 @@ const ToDoList = () => {
   const [text, setText] = useState("");
   const [selectedId, setSelectedID] = useState(-1);
   const [idEdit, setIdEdit] = useState(null);
-  const [completedToDo, setCompletedToDo] = useState('All');
+  const [completedToDo, setCompletedToDo] = useState(null);
   const [editing, setEditing] = useState(false);
   const [count, setCount] = useState(0);
+
   let editMode = {};
 
   const setEditMode = () => {
@@ -26,11 +27,12 @@ const ToDoList = () => {
   const todos = useSelector((state) => state.todos);
   const dispatch = useDispatch();
 
+
   return (
     <div className='main'>
       <div>
-        <input type="text" value={text} onChange={e => { setText(e.target.value); }} />
-        <button onClick={() => { dispatch(addTodo(text)); setText(""); }} >Add</button>
+        <input type="text" value={text} onChange={e => { setText(e.target.value); }}  />
+        <button onClick={() => { dispatch(addTodo(text)); setText("");setCount(count+1)}}  >Add</button>
         <button onClick={() => { dispatch(deleteAllTodo()) }}> Delete All </button>
       </div>
       <div >
@@ -40,11 +42,9 @@ const ToDoList = () => {
 
       </div>
 
-      <ul>     
-
-        {(todos && todos.length) ? (
-          // todos.filter(item => item.completed === 'All').map((item, idx) =>
-            todos.map((item, idx) =>
+      <ul>
+        {(todos && todos.length && completedToDo === null) ? (          
+          todos.map((item, idx) =>
             <li key={item.id} style={{ textDecoration: item.completed ? "line-through" : "none" }}>
               {
                 (selectedId === idx) ? (
@@ -58,16 +58,11 @@ const ToDoList = () => {
                       </div>
                       <div>
                         {
-                          (editing) ? (
-                            <button onClick={() => { setEditMode(); setEditing(false) }}>save</button>
-                          )
-                            :
-                            (
-                              <button onClick={() => { setSelectedID(idx); setIdEdit(item.id); setEditing(true) }}
-                                onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))}>edit</button>
-                            )
+                          (editing) ? (<button onClick={() => { setEditMode(); setEditing(false) }}>save</button>)
+                            : (<button onClick={() => { setSelectedID(idx); setIdEdit(item.id); setEditing(true) }}
+                              onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))}>edit</button>)
                         }
-                        <button onClick={() => { dispatch(deleteTodo(item.id));; setCount(count - 1); }}>Delete</button>
+                        <button onClick={() => { dispatch(deleteTodo(item.id)); setCount(count - 1); }}>Delete</button>
                       </div>
                     </div>
                   </div>
@@ -75,7 +70,6 @@ const ToDoList = () => {
                   <div style={{ editing }} className='normal-listing'>
                     <div >
                       <p>{item.text}</p>
-
                     </div>
                     <div>
                       <button onClick={() => dispatch(toggleComplete(item.id))}>
@@ -90,9 +84,52 @@ const ToDoList = () => {
                 )
               }
             </li>
-          )) : <h1>"No todos, yay!"</h1>
+          )) :
+          (
+            // <h1>"No todos, yay!"</h1>
+            todos.filter(item => item.completed === completedToDo).map((item, idx) =>
+              <li key={item.id} style={{ textDecoration: item.completed ? "line-through" : "none" }}>
+                {
+                  (selectedId === idx) ? (
+                    <div>
+                      <div style={{ display: idEdit === item.id ? 'block' : 'none' }}>
+                        <input type='text' value={item.text} onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))} />
+                      </div>
+                      <div className='updated-listing' >
+                        <div>
+                          <p style={{ display: idEdit === item.id ? 'none' : 'block' }}>{item.text}</p>
+                        </div>
+                        <div>
+                          {
+                            (editing) ? (<button onClick={() => { setEditMode(); setEditing(false) }}>save</button>)
+                              : (<button onClick={() => { setSelectedID(idx); setIdEdit(item.id); setEditing(true) }}
+                                onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))}>edit</button>)
+                          }
+                          <button onClick={() => { dispatch(deleteTodo(item.id));; setCount(count - 1); }}>Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ editing }} className='normal-listing'>
+                      <div >
+                        <p>{item.text}</p>
+                      </div>
+                      <div>
+                        <button onClick={() => dispatch(toggleComplete(item.id))}>
+                          {item.completed ? "Mark Incomplete" : "Mark Complete"}{" "}
+                        </button>
+                        <button onClick={() => { setSelectedID(idx); setIdEdit(item.id); setEditing(true) }}
+                          onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))}>edit</button>
+
+                        <button onClick={() => { dispatch(deleteTodo(item.id)); setCount(count - 1); }}>Delete</button>
+                      </div>
+                    </div>
+                  )
+                }
+              </li>))
         }
-      </ul >
+      </ul >      
+      <h3>Total count : {count}</h3>
     </div>
   );
 };
