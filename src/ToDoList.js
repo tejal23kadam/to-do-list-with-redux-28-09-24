@@ -40,7 +40,7 @@ const ToDoList = () => {
 
       </div>
 
-      <ul>
+      <ul>     
 
         {(todos && todos.length) ? (
           // todos.filter(item => item.completed === 'All').map((item, idx) =>
