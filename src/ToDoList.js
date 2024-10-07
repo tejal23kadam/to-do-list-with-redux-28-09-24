@@ -31,8 +31,8 @@ const ToDoList = () => {
   return (
     <div className='main'>
       <div>
-        <input type="text" value={text} onChange={e => { setText(e.target.value); }}  />
-        <button onClick={() => { dispatch(addTodo(text)); setText("");setCount(count+1)}}  >Add</button>
+        <input type="text" value={text} onChange={e => { setText(e.target.value); }} />
+        <button onClick={() => { dispatch(addTodo(text)); setText(""); setCount(count + 1) }}  >Add</button>
         <button onClick={() => { dispatch(deleteAllTodo()) }}> Delete All </button>
       </div>
       <div >
@@ -43,7 +43,7 @@ const ToDoList = () => {
       </div>
 
       <ul>
-        {(todos && todos.length && completedToDo === null) ? (          
+        {(todos && todos.length && completedToDo === null) ? (
           todos.map((item, idx) =>
             <li key={item.id} style={{ textDecoration: item.completed ? "line-through" : "none" }}>
               {
@@ -116,7 +116,7 @@ const ToDoList = () => {
                       </div>
                       <div>
                         <button onClick={() => dispatch(toggleComplete(item.id))}>
-                          {item.completed ? "Mark Incomplete" : "Mark Complete"}{" "}
+                          {item.completed ? "Mark Incomplete" : "Mark Complete"}
                         </button>
                         <button onClick={() => { setSelectedID(idx); setIdEdit(item.id); setEditing(true) }}
                           onChange={(e) => dispatch(updateTodo({ id: item.id, text: e.target.value }))}>edit</button>
@@ -128,8 +128,8 @@ const ToDoList = () => {
                 }
               </li>))
         }
-      </ul >      
-      <h3>Total count : {count}</h3>
+      </ul >
+      <h3>Total ToDo count : {count}</h3>
     </div>
   );
 };
